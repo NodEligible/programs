@@ -13,6 +13,15 @@ display_logo() {
 
   echo -e "\nПідписуйтеся на канал Vitok про Bitok щоб бути в курсі самих актуальних нод - https://t.me/vitoooookBitok"
 }
+
+# Функция для логирования
+log_message() {
+  echo -e "\e[0;37m"
+}
+
+# Отображение логотипа
+display_logo
+
 apt update
 apt-get install build-essential -y
 wget https://github.com/z3APA3A/3proxy/archive/0.9.3.tar.gz
