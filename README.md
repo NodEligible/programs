@@ -1,3 +1,5 @@
 # programs
-To install firewall ufw enter command:
-укн56кг65
+<div class="copy-container">
+  <code id="copyText">https://example.com</code>
+  <button class="copy-btn" onclick="copyText()">Copy</button>
+</div>
