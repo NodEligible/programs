@@ -7,3 +7,26 @@
     </svg>
   </button>
 </div>
+.copy-container {
+  display: flex;
+  align-items: center;
+}
+
+.copy-btn {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.copy-btn svg {
+  fill: #999;
+  transition: fill 0.3s ease;
+}
+
+.copy-btn:hover svg {
+  fill: #4CAF50;
+}
