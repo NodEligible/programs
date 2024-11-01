@@ -1,7 +1,7 @@
  #!/bin/bash
 
 function colors {
-echo -e '\e[0;37m'
+"WHIT="\e[32m"
 }
 
   colors
