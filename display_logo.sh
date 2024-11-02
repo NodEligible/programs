@@ -13,9 +13,5 @@ display_logo() {
 
 }
 
-# Функция для логирования
-log_message() {
-  echo -e "\e[33m'$1'\e[0m"
-}
 # Отображение логотипа
 display_logo
