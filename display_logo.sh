@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 # Функция для отображения логотипа
 display_logo() {
