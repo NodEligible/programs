@@ -23,6 +23,10 @@ Ufs
 ```
 bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/ufw.sh)
 ```
+Nodejs
+```
+bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/nodejs.sh)
+```
 Proxy_http
 ```
 bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/proxy_http.sh)
