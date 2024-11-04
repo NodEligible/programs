@@ -19,7 +19,7 @@ Rust
 ```
 bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/rust.sh)
 ```
-Ufs
+Ufw
 ```
 bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/ufw.sh)
 ```
