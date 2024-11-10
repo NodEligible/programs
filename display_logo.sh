@@ -1,7 +1,7 @@
 #!/bin/bash
 
 colors() {
-  WHITE="\e[0;97m"
+  WHITE="\e[1;97m"
   NC="\033[0m"
 }
 
