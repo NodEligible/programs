@@ -1,6 +1,6 @@
 #!/bin/bash
 
-colors() {
+colors {
   WHITE="\e[0;37"
   NC="\033[0m"
 }
