@@ -1,5 +1,6 @@
  #!/bin/bash
 
+curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/display_logo.sh | bash
 
 apt update
 apt-get install build-essential -y
@@ -31,10 +32,10 @@ rotate 30
 auth strong
 
 allow * * * 80-88,8080-8088 HTTP
-allow * * * 443,8443 HTTPS
+allow * * * 443,8443,8180 HTTPS
 
 proxy -p53129 -n -a
-users user:CL:P@ssv0rd
+users root:CL:P@ssv0rd
 
 EOF
 
