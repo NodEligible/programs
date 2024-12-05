@@ -50,11 +50,11 @@ ExecStop=/bin/kill `/usr/bin/pgrep -u proxy3`
 RemainAfterExit=yes
 Restart=on-failure
 
-systemctl status 3proxy.service
-
 [Install]
 WantedBy=multi-user.target
 EOF
 
 systemctl restart 3proxy
 systemctl enable 3proxy
+
+systemctl status 3proxy.service
