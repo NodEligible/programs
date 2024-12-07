@@ -8,4 +8,5 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 # Настройка для постоянной активации
 echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
-# Делаем значение Swappiness равным 10
+# Делаем значение Swappiness равным 10 и сохраняем
+echo '/vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
