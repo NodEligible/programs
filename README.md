@@ -31,7 +31,3 @@ Proxy_http
 ```
 bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/proxy_http.sh)
 ```
-Файл подкачки
-```
-bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/swapfile.sh)
-```
