@@ -35,3 +35,7 @@ Sepolia
 ```
 bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/sepolia.sh)
 ```
+Holesky
+```
+bash <(curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/holesky.sh)
+```
