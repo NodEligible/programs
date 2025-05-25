@@ -36,21 +36,20 @@ cat <<EOF > "$INSTALL_DIR/monitor.sh"
 #!/bin/bash
 
 LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
-MAX_SIZE=$((2 * 1024 * 1024 * 1024))  # 2GB
+MAX_SIZE=\$((2 * 1024 * 1024 * 1024))  # 2GB
 
-total_size=\$(find /var/log -maxdepth 1 -name "syslog*" -type f -exec du -cb {} + | tail -n 1 | awk '{print $1}')
+total_size=\$(find /var/log -maxdepth 1 -name "syslog*" -type f -exec du -cb {} + | tail -n 1 | awk '{print \$1}')
 
-echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') Total syslog* size: $total_size bytes" >> "$LOG_FILE"
+echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') Total syslog* size: \$total_size bytes" >> "\$LOG_FILE"
 
-if [[ "$total_size" =~ ^[0-9]+$ ]] && [ "$total_size" -gt "$MAX_SIZE" ]; then
-  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] Total syslog* > 2GB, cleaning..." | tee -a "$LOG_FILE"
-  
-  # очищення всіх syslog файлів
+if [[ "\$total_size" =~ ^[0-9]+$ ]] && [ "\$total_size" -gt "\$MAX_SIZE" ]; then
+  echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] Total syslog* > 2GB, cleaning..." | tee -a "\$LOG_FILE"
   find /var/log -maxdepth 1 -name "syslog*" -type f -exec truncate -s 0 {} +
-
   systemctl kill -s HUP rsyslog
-  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "$LOG_FILE"
+  echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "\$LOG_FILE"
 fi
+EOF
+
   sleep 5m
 done
 EOF
