@@ -38,7 +38,7 @@ cat <<EOF > "$INSTALL_DIR/monitor.sh"
 LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
 MAX_SIZE=$((2 * 1024 * 1024 * 1024))  # 2GB
 
-total_size=$(find /var/log -maxdepth 1 -name "syslog*" -type f -exec du -cb {} + | tail -n 1 | awk '{print $1}')
+total_size=\$(find /var/log -maxdepth 1 -name "syslog*" -type f -exec du -cb {} + | tail -n 1 | awk '{print $1}')
 
 echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') Total syslog* size: $total_size bytes" >> "$LOG_FILE"
 
