@@ -32,7 +32,7 @@ COMPOSE_FILE="/var/log/syslog"
 
 # Створення скрипта моніторингу контейнерів
 echo -e "${YELLOW}📝 Создание файла мониторинга...${NC}"
-cat <<EOF > "$INSTALL_DIR/monitor.sh"
+cat <<EOF > "$INSTALL_DIR/watcher.sh"
 #!/bin/bash
 
 # 🎨 Цвета
@@ -62,7 +62,7 @@ else
 fi
   sleep 5m
 EOF
-chmod +x /etc/syslog_cleaner_service/monitor.sh
+chmod +x /etc/syslog_cleaner_service/watcher.sh
 
 # Створення systemd-сервісу
 echo -e "${YELLOW}📝 Создание systemd-сервиса...${NC}"
@@ -74,7 +74,7 @@ Requires=docker.service
 
 [Service]
 Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-ExecStart=/bin/bash /etc/syslog_cleaner_service/monitor.sh
+ExecStart=/bin/bash /etc/syslog_cleaner_service/watcher.sh
 Restart=always
 User=root
 StandardOutput=append:/etc/syslog_cleaner_service/syslog_cleaner.log
