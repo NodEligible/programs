@@ -49,11 +49,11 @@ MAX_SIZE=\$((10 * 1024 * 1024 * 1024))  # 10GB
 total_size=\$(find /var/log -maxdepth 1 -name "syslog*" -type f -exec du -cb {} + | tail -n 1 | awk '{print \$1}')
 total_gb=\$(awk "BEGIN {printf \"%.2f\", \$total_size/1024/1024/1024}")
 
-echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') 💾 Общий размер логов syslog*: \${total_gb} GB (\$total_size байт)" | tee -a "\$LOG_FILE"
+echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') 💾 ${YELLOW}Общий размер логов syslog*:${NC} \${total_gb} GB (\$total_size байт)" | tee -a "\$LOG_FILE"
 
 # 🚨 Проверка превышения порога
 if [[ "\$total_size" =~ ^[0-9]+$ ]] && [ "\$total_size" -gt "\$MAX_SIZE" ]; then
-  echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')  🔥 ${RED}Размер логов превышает 10GB — выполняем очистку...${NC}" | tee -a "\$LOG_FILE"
+  echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')  🔥 ${RED}Размер логов превышает${NC} 10GB — ${RED}выполняем очистку...${NC}" | tee -a "\$LOG_FILE"
   find /var/log -maxdepth 1 -name "syslog*" -type f -exec truncate -s 0 {} +
   systemctl kill -s HUP rsyslog
   echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')  ✅ ${BLUE}Служба rsyslog успешно перезапущена.${NC}" | tee -a "\$LOG_FILE"
