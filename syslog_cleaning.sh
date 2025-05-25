@@ -48,15 +48,16 @@ LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
 
 MAX_SIZE=$((2 * 1024 * 1024 * 1024))
 
-if [ -f "$COMPOSE_FILE" ]; then
-  actual_size=$(stat -c %s "$COMPOSE_FILE")
-  if [ "$actual_size" -gt "$MAX_SIZE" ]; then
-    echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')[!] /var/log/syslog > 2GB, clearing..." | tee -a "$LOG_FILE"
-    truncate -s 0 "$COMPOSE_FILE"
-    systemctl kill -s HUP rsyslog
+while true; do
+  if [ -f "$COMPOSE_FILE" ]; then
+    actual_size=$(stat -c %s "$COMPOSE_FILE")
+    if [ "$actual_size" -gt "$MAX_SIZE" ]; then
+      echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] /var/log/syslog > 2GB, clearing..." | tee -a "$LOG_FILE"
+      truncate -s 0 "$COMPOSE_FILE"
+      systemctl kill -s HUP rsyslog
+    fi
   fi
-fi
-sleep 5m
+  sleep 5m
 done
 EOF
 chmod +x /etc/syslog_cleaner_service/monitor.sh
