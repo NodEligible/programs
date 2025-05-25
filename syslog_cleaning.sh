@@ -1,24 +1,61 @@
-
-
-
-/usr/local/bin/limit-syslog.sh
-
 #!/bin/bash
 
-LOG_FILE="/var/log/syslog"
-MAX_SIZE=$((1024 * 1024 * 1024))  # 1GB
+curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/display_logo.sh | bash
 
-if [ -f "$LOG_FILE" ]; then
-  actual_size=$(stat -c %s "$LOG_FILE")
+YELLOW='\e[0;33m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+BLUE='\033[38;5;81m'
+NC='\033[0m'
+
+
+# Шлях для встановлення
+INSTALL_DIR="/etc/syslog_cleaner_service"
+SERVICE_NAME="syslog-cleaner"
+
+echo -e "${YELLOW}📁 Создание папки $INSTALL_DIR...${NC}"
+mkdir -p "$INSTALL_DIR"
+
+# Шлях до файлу логування
+LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
+
+# Створюємо директорію, якщо її немає
+mkdir -p "$(dirname "$LOG_FILE")"
+
+# Створюємо файл логування, якщо він не існує
+touch "$LOG_FILE"
+
+# Надаємо права на запис у файл
+chmod 644 "$LOG_FILE"
+
+COMPOSE_FILE="/var/log/syslog"
+
+# Створення скрипта моніторингу контейнерів
+echo -e "${YELLOW}📝 Создание файла мониторинга...${NC}"
+cat <<EOF > "$INSTALL_DIR/monitor.sh"
+#!/bin/bash
+
+# Кольорові змінні
+YELLOW='\e[0;33m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+BLUE='\033[38;5;81m'
+NC='\033[0m'
+
+MAX_SIZE=$((2048 * 2048 * 2048))  # 2GB
+
+if [ -f "$COMPOSE_FILE" ]; then
+  actual_size=$(stat -c %s "$COMPOSE_FILE")
   if [ "$actual_size" -gt "$MAX_SIZE" ]; then
     echo "[!] /var/log/syslog > 1GB, clearing..."
-    truncate -s 0 "$LOG_FILE"
+    truncate -s 0 "$COMPOSE_FILE"
     systemctl restart rsyslog
   fi
 fi
 
-
-chmod +x /usr/local/bin/limit-syslog.sh
+done
+EOF
+chmod +x /etc/syslog_cleaner_service/monitor.sh
 
 
 [Unit]
