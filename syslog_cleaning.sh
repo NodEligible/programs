@@ -77,8 +77,6 @@ Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ExecStart=/bin/bash /etc/syslog_cleaner_service/watcher.sh
 Restart=always
 User=root
-StandardOutput=append:/etc/syslog_cleaner_service/syslog_cleaner.log
-StandardError=append:/etc/syslog_cleaner_service/syslog_cleaner.log
 
 [Install]
 WantedBy=multi-user.target
