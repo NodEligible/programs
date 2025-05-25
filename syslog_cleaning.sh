@@ -56,7 +56,7 @@ if [ -f "$COMPOSE_FILE" ]; then
     systemctl kill -s HUP rsyslog
   fi
 fi
-
+sleep 5m
 done
 EOF
 chmod +x /etc/syslog_cleaner_service/monitor.sh
