@@ -75,10 +75,9 @@ EOF
 
 # Активація
 echo -e "${GREEN}🚀 Активація systemd...${NC}"
-systemctl daemon-reexec
 systemctl daemon-reload
-systemctl enable --now $TIMER_NAME
+systemctl enable syslog-cleaner.timer
+systemct start syslog-cleaner.timer
 
 # Перевірка
 echo -e "${GREEN}✅ Готово. Таймер активний:${NC}"
-systemctl list-timers | grep $SERVICE_NAME
