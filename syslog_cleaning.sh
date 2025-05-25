@@ -49,7 +49,6 @@ if [[ "\$total_size" =~ ^[0-9]+$ ]] && [ "\$total_size" -gt "\$MAX_SIZE" ]; then
   echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "\$LOG_FILE"
 fi
   sleep 5m
-done
 EOF
 chmod +x /etc/syslog_cleaner_service/monitor.sh
 
