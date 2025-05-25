@@ -1,73 +1,61 @@
 #!/bin/bash
 
-curl -s https://raw.githubusercontent.com/NodEligible/programs/refs/heads/main/display_logo.sh | bash
-
+# Кольори
 YELLOW='\e[0;33m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-BLUE='\033[38;5;81m'
 NC='\033[0m'
 
-
-# Шлях для встановлення
+# Папка і файли
 INSTALL_DIR="/etc/syslog_cleaner_service"
+SCRIPT_PATH="$INSTALL_DIR/monitor.sh"
 SERVICE_NAME="syslog-cleaner"
+TIMER_NAME="syslog-cleaner.timer"
+LOG_FILE="$INSTALL_DIR/syslog_cleaner.log"
+SYSLOG_FILE="/var/log/syslog"
 
-echo -e "${YELLOW}📁 Создание папки $INSTALL_DIR...${NC}"
+# Створення директорій і лог-файлу
+echo -e "${YELLOW}📁 Створення папки $INSTALL_DIR...${NC}"
 mkdir -p "$INSTALL_DIR"
-
-# Шлях до файлу логування
-LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
-
-# Створюємо директорію, якщо її немає
-mkdir -p "$(dirname "$LOG_FILE")"
-
-# Створюємо файл логування, якщо він не існує
 touch "$LOG_FILE"
-
-# Надаємо права на запис у файл
 chmod 644 "$LOG_FILE"
 
-COMPOSE_FILE="/var/log/syslog"
-
-# Створення скрипта моніторингу контейнерів
-echo -e "${YELLOW}📝 Создание файла мониторинга...${NC}"
-cat <<EOF > "$INSTALL_DIR/monitor.sh"
+# Створення скрипта моніторингу
+echo -e "${YELLOW}📝 Створення скрипта...${NC}"
+cat <<EOF > "$SCRIPT_PATH"
 #!/bin/bash
 
-# Кольорові змінні
-YELLOW='\e[0;33m'
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-BLUE='\033[38;5;81m'
-NC='\033[0m'
+MAX_SIZE=\$((2 * 1024 * 1024 * 1024))  # 2GB
 
-MAX_SIZE=$((2048 * 2048 * 2048))  # 2GB
-
-if [ -f "$COMPOSE_FILE" ]; then
-  actual_size=$(stat -c %s "$COMPOSE_FILE")
-  if [ "$actual_size" -gt "$MAX_SIZE" ]; then
-    echo "[!] /var/log/syslog > 1GB, clearing..."
-    truncate -s 0 "$COMPOSE_FILE"
+if [ -f "$SYSLOG_FILE" ]; then
+  actual_size=\$(stat -c %s "$SYSLOG_FILE")
+  if [ "\$actual_size" -gt "\$MAX_SIZE" ]; then
+    echo "[\$(date)] /var/log/syslog > 2GB, clearing..." >> "$LOG_FILE"
+    truncate -s 0 "$SYSLOG_FILE"
     systemctl restart rsyslog
+    echo "[\$(date)] rsyslog restarted." >> "$LOG_FILE"
   fi
 fi
-
-done
 EOF
-chmod +x /etc/syslog_cleaner_service/monitor.sh
+chmod +x "$SCRIPT_PATH"
 
-
+# Створення systemd service
+echo -e "${YELLOW}⚙️ Створення systemd service...${NC}"
+cat <<EOF > /etc/systemd/system/$SERVICE_NAME.service
 [Unit]
-Description=Syslog Size Limiter
+Description=Syslog Cleaner Service
 After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/limit-syslog.sh
+ExecStart=$SCRIPT_PATH
+EOF
 
+# Створення systemd таймера
+echo -e "${YELLOW}⏱ Створення systemd timer...${NC}"
+cat <<EOF > /etc/systemd/system/$TIMER_NAME
 [Unit]
-Description=Run syslog limiter every 15 minutes
+Description=Run syslog cleaner every 15 minutes
 
 [Timer]
 OnBootSec=1min
@@ -76,12 +64,14 @@ Persistent=true
 
 [Install]
 WantedBy=timers.target
+EOF
 
+# Активація
+echo -e "${GREEN}🚀 Активація systemd...${NC}"
 systemctl daemon-reexec
 systemctl daemon-reload
-systemctl enable --now limit-syslog.timer
+systemctl enable --now $TIMER_NAME
 
 # Перевірка
-systemctl list-timers | grep limit-syslog
-journalctl -u limit-syslog.service
-
+echo -e "${GREEN}✅ Готово. Таймер активний:${NC}"
+systemctl list-timers | grep $SERVICE_NAME
