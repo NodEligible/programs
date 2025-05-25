@@ -48,8 +48,6 @@ if [[ "\$total_size" =~ ^[0-9]+$ ]] && [ "\$total_size" -gt "\$MAX_SIZE" ]; then
   systemctl kill -s HUP rsyslog
   echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "\$LOG_FILE"
 fi
-EOF
-
   sleep 5m
 done
 EOF
