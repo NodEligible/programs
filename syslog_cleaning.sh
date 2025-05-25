@@ -25,6 +25,12 @@ echo -e "${YELLOW}📝 Створення скрипта...${NC}"
 cat <<EOF > "$SCRIPT_PATH"
 #!/bin/bash
 
+YELLOW='\e[0;33m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+BLUE='\033[38;5;81m'
+NC='\033[0m'
+
 MAX_SIZE=\$((2 * 1024 * 1024 * 1024))  # 2GB
 
 if [ -f "$SYSLOG_FILE" ]; then
@@ -47,6 +53,7 @@ Description=Syslog Cleaner Service
 After=network.target
 
 [Service]
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Type=oneshot
 ExecStart=$SCRIPT_PATH
 EOF
