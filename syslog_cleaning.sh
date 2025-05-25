@@ -35,18 +35,30 @@ echo -e "${YELLOW}📝 Создание файла мониторинга...${NC
 cat <<EOF > "$INSTALL_DIR/monitor.sh"
 #!/bin/bash
 
+# 🎨 Цвета
+YELLOW='\e[0;33m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+BLUE='\033[38;5;81m'
+NC='\033[0m'
+
 LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
-MAX_SIZE=\$((5 * 1024 * 1024 * 1024))  # 5GB
+MAX_SIZE=\$((10 * 1024 * 1024 * 1024))  # 10GB
 
+# 📏 Подсчет общего размера файлов syslog*
 total_size=\$(find /var/log -maxdepth 1 -name "syslog*" -type f -exec du -cb {} + | tail -n 1 | awk '{print \$1}')
+total_gb=\$(awk "BEGIN {printf \"%.2f\", \$total_size/1024/1024/1024}")
 
-echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') Total syslog* size: \$total_size bytes" >> "\$LOG_FILE"
+echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') 💾 Общий размер логов syslog*: \${total_gb} GB (\$total_size байт)" | tee -a "\$LOG_FILE"
 
+# 🚨 Проверка превышения порога
 if [[ "\$total_size" =~ ^[0-9]+$ ]] && [ "\$total_size" -gt "\$MAX_SIZE" ]; then
-  echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] Total syslog* > 5GB, cleaning..." | tee -a "\$LOG_FILE"
+  echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')  🔥 ${RED}Размер логов превышает 10GB — выполняем очистку...${NC}" | tee -a "\$LOG_FILE"
   find /var/log -maxdepth 1 -name "syslog*" -type f -exec truncate -s 0 {} +
   systemctl kill -s HUP rsyslog
-  echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "\$LOG_FILE"
+  echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')  ✅ ${BLUE}Служба rsyslog успешно перезапущена.${NC}" | tee -a "\$LOG_FILE"
+else
+  echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')  ✅ ${GREEN}Всё в порядке. Очистка не требуется.${NC}" | tee -a "\$LOG_FILE"
 fi
   sleep 5m
 EOF
