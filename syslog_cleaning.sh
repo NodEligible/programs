@@ -35,24 +35,22 @@ echo -e "${YELLOW}📝 Создание файла мониторинга...${NC
 cat <<EOF > "$INSTALL_DIR/monitor.sh"
 #!/bin/bash
 
-COMPOSE_FILE="/var/log/syslog"
 LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
 MAX_SIZE=$((2 * 1024 * 1024 * 1024))  # 2GB
 
-if [ -f "$COMPOSE_FILE" ]; then
-  actual_size=$(stat -c %s "$COMPOSE_FILE")
-  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') Actual size: $actual_size" >> "$LOG_FILE"
+total_size=$(find /var/log -maxdepth 1 -name "syslog*" -type f -exec du -b {} + | awk '{total+=$1} END{print total}')
 
-  if [[ "$actual_size" =~ ^[0-9]+$ ]] && [ "$actual_size" -gt "$MAX_SIZE" ]; then
-    echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] /var/log/syslog > 2GB, clearing..." | tee -a "$LOG_FILE"
-    truncate -s 0 "$COMPOSE_FILE"
-    systemctl kill -s HUP rsyslog
-    echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "$LOG_FILE"
-  fi
-else
-  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [X] File $COMPOSE_FILE not found" >> "$LOG_FILE"
+echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') Total syslog* size: $total_size bytes" >> "$LOG_FILE"
+
+if [[ "$total_size" =~ ^[0-9]+$ ]] && [ "$total_size" -gt "$MAX_SIZE" ]; then
+  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] Total syslog* > 2GB, cleaning..." | tee -a "$LOG_FILE"
+  
+  # очищення всіх syslog файлів
+  find /var/log -maxdepth 1 -name "syslog*" -type f -exec truncate -s 0 {} +
+
+  systemctl kill -s HUP rsyslog
+  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "$LOG_FILE"
 fi
-
   sleep 5m
 done
 EOF
