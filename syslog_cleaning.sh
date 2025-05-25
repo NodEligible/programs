@@ -60,7 +60,7 @@ if [[ "\$total_size" =~ ^[0-9]+$ ]] && [ "\$total_size" -gt "\$MAX_SIZE" ]; then
 else
   echo -e "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S')  ✅ ${GREEN}Всё в порядке. Очистка не требуется.${NC}" | tee -a "\$LOG_FILE"
 fi
-  sleep 5m
+  sleep 20m
 EOF
 chmod +x /etc/syslog_cleaner_service/watcher.sh
 
