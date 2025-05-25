@@ -36,10 +36,10 @@ MAX_SIZE=\$((2 * 1024 * 1024 * 1024))  # 2GB
 if [ -f "$SYSLOG_FILE" ]; then
   actual_size=\$(stat -c %s "$SYSLOG_FILE")
   if [ "\$actual_size" -gt "\$MAX_SIZE" ]; then
-    echo "[\$(date)] /var/log/syslog > 2GB, clearing..." >> "$LOG_FILE"
+    echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') /var/log/syslog > 2GB, clearing..." >> "$LOG_FILE"
     truncate -s 0 "$SYSLOG_FILE"
     systemctl restart rsyslog
-    echo "[\$(date)] rsyslog restarted." >> "$LOG_FILE"
+    echo "\$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') rsyslog restarted." >> "$LOG_FILE"
   fi
 fi
 EOF
