@@ -35,28 +35,24 @@ echo -e "${YELLOW}📝 Создание файла мониторинга...${NC
 cat <<EOF > "$INSTALL_DIR/monitor.sh"
 #!/bin/bash
 
-# Кольорові змінні
-YELLOW='\e[0;33m'
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-BLUE='\033[38;5;81m'
-NC='\033[0m'
-
 COMPOSE_FILE="/var/log/syslog"
-
 LOG_FILE="/etc/syslog_cleaner_service/syslog_cleaner.log"
+MAX_SIZE=$((2 * 1024 * 1024 * 1024))  # 2GB
 
-MAX_SIZE=$((2 * 1024 * 1024 * 1024))
+if [ -f "$COMPOSE_FILE" ]; then
+  actual_size=$(stat -c %s "$COMPOSE_FILE")
+  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') Actual size: $actual_size" >> "$LOG_FILE"
 
-while true; do
-  if [ -f "$COMPOSE_FILE" ]; then
-    actual_size=$(stat -c %s "$COMPOSE_FILE")
-    if [ "$actual_size" -gt "$MAX_SIZE" ]; then
-      echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] /var/log/syslog > 2GB, clearing..." | tee -a "$LOG_FILE"
-      truncate -s 0 "$COMPOSE_FILE"
-      systemctl kill -s HUP rsyslog
-    fi
+  if [[ "$actual_size" =~ ^[0-9]+$ ]] && [ "$actual_size" -gt "$MAX_SIZE" ]; then
+    echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [!] /var/log/syslog > 2GB, clearing..." | tee -a "$LOG_FILE"
+    truncate -s 0 "$COMPOSE_FILE"
+    systemctl kill -s HUP rsyslog
+    echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [✔] rsyslog reloaded" | tee -a "$LOG_FILE"
   fi
+else
+  echo "$(/usr/bin/date '+%Y-%m-%d %H:%M:%S') [X] File $COMPOSE_FILE not found" >> "$LOG_FILE"
+fi
+
   sleep 5m
 done
 EOF
