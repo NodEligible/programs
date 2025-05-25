@@ -15,13 +15,13 @@ LOG_FILE="$INSTALL_DIR/syslog_cleaner.log"
 SYSLOG_FILE="/var/log/syslog"
 
 # Створення директорій і лог-файлу
-echo -e "${YELLOW}📁 Створення папки $INSTALL_DIR...${NC}"
+echo -e "${YELLOW}📁 Создание папки $INSTALL_DIR...${NC}"
 mkdir -p "$INSTALL_DIR"
 touch "$LOG_FILE"
 chmod 644 "$LOG_FILE"
 
 # Створення скрипта моніторингу
-echo -e "${YELLOW}📝 Створення скрипта...${NC}"
+echo -e "${YELLOW}📝 Создание скрипта...${NC}"
 cat <<EOF > "$SCRIPT_PATH"
 #!/bin/bash
 
@@ -46,7 +46,7 @@ EOF
 chmod +x "$SCRIPT_PATH"
 
 # Створення systemd service
-echo -e "${YELLOW}⚙️ Створення systemd service...${NC}"
+echo -e "${YELLOW}⚙️ Создание systemd service...${NC}"
 cat <<EOF > /etc/systemd/system/$SERVICE_NAME.service
 [Unit]
 Description=Syslog Cleaner Service
@@ -59,7 +59,7 @@ ExecStart=$SCRIPT_PATH
 EOF
 
 # Створення systemd таймера
-echo -e "${YELLOW}⏱ Створення systemd timer...${NC}"
+echo -e "${YELLOW}⏱ Создание systemd timer...${NC}"
 cat <<EOF > /etc/systemd/system/$TIMER_NAME
 [Unit]
 Description=Run syslog cleaner every 15 minutes
@@ -74,10 +74,10 @@ WantedBy=timers.target
 EOF
 
 # Активація
-echo -e "${GREEN}🚀 Активація systemd...${NC}"
+echo -e "${YELLOW}🚀 Активация systemd...${NC}"
 systemctl daemon-reload
 systemctl enable syslog-cleaner.timer
-systemct start syslog-cleaner.timer
+systemctl start syslog-cleaner.timer
 
 # Перевірка
-echo -e "${GREEN}✅ Готово. Таймер активний:${NC}"
+echo -e "${GREEN}✅ Установка зевершена${NC}"
