@@ -69,8 +69,8 @@ echo -e "${YELLOW}📝 Создание systemd-сервиса...${NC}"
 cat <<EOF > "/etc/systemd/system/$SERVICE_NAME.service"
 [Unit]
 Description=Syslog Cleaner Service
-After=docker.service
-Requires=docker.service
+#After=docker.service
+#Requires=docker.service
 
 [Service]
 Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
